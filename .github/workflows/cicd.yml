@@ -1,14 +1,17 @@
 name: CI/CD
 on:
+  push:
+    branches: [ '*', '!main' ]
+  pull_request:
+    types: [ opened, synchronize ]
   workflow_dispatch:
     inputs:
-      environment:
-        description: "Name of the role to create"
+      ccb_env:
+        description: 'Environment name to deploy the CCB infra'
         required: true
-        default: "dummy-test"
-
-env:
-  tf_version: '1.5.2'
+        type: string
+  pull_request_review:
+    types: [ submitted ]
 
 permissions:
   id-token: write
@@ -17,23 +20,21 @@ permissions:
   actions: write
 
 jobs:
-  terraform-deploy:
+  discover-environment:
+    name: "Discover Environment"
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions:checkout@v3
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v1
-        with:
-          terraform_version: "1.5.2"  # Adjust the version as needed
-
-      - name: Terraform init
-        run: terraform init
-
-      - name: Terraform plan
-        run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -out=tfplan
-
-      - name: Terraform apply
-        run: terraform apply -auto-approve tfplan
+      - name: Determine target environments
+        id: env
+        working-directory: .
+        run: |
+          target_env="${{ github.event.inputs.ccb_env }}"
+          if [-z "$target_env"]
+          then
+            target_env="ccb-$(date +'%Y%m%d%H%M%S')"
+          fi
+          echo "matrix=${target_env}" >> $GITHUB_OUTPUT
+          echo "${target_env}"
