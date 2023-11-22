@@ -22,7 +22,6 @@ permissions:
 jobs:
   terraform-deploy:
     runs-on: ubuntu-latest
-    working-directory: '${{ github.repository }}/modules'
 
     steps:
       - name: Checkout code
@@ -41,10 +40,13 @@ jobs:
           terraform_version: "1.5.2"  # Adjust the version as needed
 
       - name: Terraform init
+        working-directory: ./modules
         run: terraform init
 
       - name: Terraform plan
+        working-directory: ./modules
         run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -out=tfplan
 
       - name: Terraform apply
+        working-directory: ./modules
         run: terraform apply -auto-approve tfplan
