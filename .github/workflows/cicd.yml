@@ -92,6 +92,11 @@ jobs:
     needs: [ discover-environment ]
     if: ${{ github.event.inputs.actions == 'Destroy' }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          path: ${{ github.repository }}
+
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
