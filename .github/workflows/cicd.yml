@@ -67,7 +67,6 @@ jobs:
       - name: Terraform init
         working-directory: '${{ github.repository }}/modules/'
         run: |
-          aws sts get-caller-identity
           terraform init
 
       - name: Terraform plan
@@ -77,6 +76,14 @@ jobs:
       - name: Terraform apply
         working-directory: '${{ github.repository }}/modules/'
         run: terraform apply -auto-approve tfplan
+
+      - name: Create a new directory inside the terraform bucket
+        run: |
+          aws s3api put_object --bucket github-oidc-terraform-mandy --key "${{ github.event.inputs.environment }}/"
+
+      - name: Store the terraform state file in S3
+        run: |
+          aws s3 cp terraform.tfstate s3://github-oidc-terraform-mandy/${{ github.event.inputs.environment }}/terraform.tfstate
 
 
       
