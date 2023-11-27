@@ -7,6 +7,12 @@ on:
       environment:
         description: "Name of the role to create"
         required: true
+      actions:
+        description: "Action to be performed"
+        type: choice
+        options:
+          - "Create"
+          - "Destroy"
 
 env:
   tf_version: '1.5.2'
@@ -29,13 +35,20 @@ jobs:
           env_name=${{ github.event.inputs.environment }}
           echo "matrix=$env_name" >> $GITHUB_OUTPUT
           echo "${matrix}"
+      - name: Find the action
+        id: check_action
+        run: |
+          tf_action=${{ github.event.inputs.actions }}
+          echo "action_matrix=$tf_action" >> $GITHUB_OUTPUT
+          echo "${action_matrix}"
     outputs:
       target_env: ${{ steps.env.outputs.matrix }}
+      tf_action: ${{ steps.check_action.outputs.action_matrix }}
 
   terraform-deploy:
     runs-on: ubuntu-latest
     needs: [ discover-environment ]
-
+    if: ${{ discover-environment.outputs.tf_action == "Create" }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -67,3 +80,6 @@ jobs:
       - name: Terraform apply
         working-directory: '${{ github.repository }}/modules/'
         run: terraform apply -auto-approve tfplan
+
+
+      
