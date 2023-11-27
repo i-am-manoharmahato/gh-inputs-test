@@ -87,4 +87,35 @@ jobs:
           aws s3 cp terraform.tfstate s3://github-oidc-terraform-mandy/${{ github.event.inputs.environment }}/terraform.tfstate
 
 
+  terraform-destroy:
+    runs-on: ubuntu-latest
+    needs: [ discover-environment ]
+    if: ${{ github.event.inputs.actions == 'Destroy' }}
+    steps:
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.TF_AWS_ROLE }}
+          aws-region: ap-southeast-2
+
+      - name: Retrieve the tfstate file from S3 bucket
+        working-directory: '${{ github.repository }}/modules/'
+        run: |
+          aws s3 cp s3://github-oidc-terraform-mandy/${{ github.event.inputs.environment }}/terraform.tfstate terraform.tfstate
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: "1.5.2"  # Adjust the version as needed
+
+      - name: Terraform init
+        working-directory: '${{ github.repository }}/modules/'
+        run: |
+          terraform init
+
+      - name: Terraform destroy
+        working-directory: '${{ github.repository }}/modules/'
+        run: terraform destroy -auto-approve
+
+
       
