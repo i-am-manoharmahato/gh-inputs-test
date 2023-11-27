@@ -28,7 +28,7 @@ jobs:
         run: |
           env_name=${{ github.event.inputs.environment }}
           echo "matrix=$env_name" >> $GITHUB_OUTPUT
-          echo"${matrix}
+          echo "${matrix}"
     outputs:
       target_env: ${{ steps.env.outputs.matrix }}
 
