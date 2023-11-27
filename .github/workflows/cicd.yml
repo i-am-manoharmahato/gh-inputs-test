@@ -120,7 +120,7 @@ jobs:
 
       - name: Terraform destroy
         working-directory: '${{ github.repository }}/modules/'
-        run: terraform destroy -auto-approve
+        run: terraform destroy -var="dummy_name=${{ github.event.inputs.environment }}" -auto-approve
 
 
       
