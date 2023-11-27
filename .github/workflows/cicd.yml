@@ -19,8 +19,22 @@ permissions:
   actions: write
 
 jobs:
+
+  discover-environment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find the environment name
+        id: env
+        run: |
+          env_name=${{ github.event.inputs.environment }}
+          echo "matrix=$env_name" >> $GITHUB_OUTPUT
+          echo"${matrix}
+    outputs:
+      target_env: ${{ steps.env.outputs.matrix }}
+
   terraform-deploy:
     runs-on: ubuntu-latest
+    needs: [ discover-environment ]
 
     steps:
       - name: Checkout code
@@ -48,8 +62,8 @@ jobs:
 
       - name: Terraform plan
         working-directory: '${{ github.repository }}/modules/'
-        run: terraform plan -out=tfplan
+        run: terraform plan -var="dummy_name=${{ github.event.inputs.environment }}" -out=tfplan
 
       - name: Terraform apply
         working-directory: '${{ github.repository }}/modules/'
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -var="dummy_name=${{ github.event.inputs.environment }}" -auto-approve tfplan
