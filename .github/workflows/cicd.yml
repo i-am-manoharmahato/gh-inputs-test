@@ -82,6 +82,7 @@ jobs:
           aws s3api put-object --bucket github-oidc-terraform-mandy --key "${{ github.event.inputs.environment }}/"
 
       - name: Store the terraform state file in S3
+        working-directory: '${{ github.repository }}/modules/'
         run: |
           aws s3 cp terraform.tfstate s3://github-oidc-terraform-mandy/${{ github.event.inputs.environment }}/terraform.tfstate
 
