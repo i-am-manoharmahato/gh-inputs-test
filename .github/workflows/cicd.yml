@@ -79,7 +79,7 @@ jobs:
 
       - name: Create a new directory inside the terraform bucket
         run: |
-          aws s3api put_object --bucket github-oidc-terraform-mandy --key "${{ github.event.inputs.environment }}/"
+          aws s3api put-object --bucket github-oidc-terraform-mandy --key "${{ github.event.inputs.environment }}/"
 
       - name: Store the terraform state file in S3
         run: |
