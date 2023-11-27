@@ -42,11 +42,13 @@ jobs:
 
       - name: Terraform init
         working-directory: '${{ github.repository }}/modules/'
-        run: terraform init
+        run: |
+          aws sts get-caller-identity
+          terraform init
 
       - name: Terraform plan
         working-directory: '${{ github.repository }}/modules/'
-        run: terraform plan -var="environment=${{ github.event.inputs.environment }}" -out=tfplan
+        run: terraform plan -out=tfplan
 
       - name: Terraform apply
         working-directory: '${{ github.repository }}/modules/'
