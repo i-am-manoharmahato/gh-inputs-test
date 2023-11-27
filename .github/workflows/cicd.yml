@@ -66,4 +66,4 @@ jobs:
 
       - name: Terraform apply
         working-directory: '${{ github.repository }}/modules/'
-        run: terraform apply -var="dummy_name=${{ github.event.inputs.environment }}" -auto-approve tfplan
+        run: terraform apply -auto-approve tfplan
