@@ -48,7 +48,7 @@ jobs:
 
       - name: Copy the dir structure
         run: |
-          cp -fR modules/ ./$ {{ needs.parse-inputs.outputs.ccb_env }}
+          cp -fR ./modules/ ./$ {{ needs.parse-inputs.outputs.ccb_env }}
           cd $ {{ needs.parse-inputs.outputs.ccb_env }}
           pwd
           ls -latrh
