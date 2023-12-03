@@ -5,12 +5,13 @@ on:
       environment:
         description: "Name of the env"
         required: true
-      actions:
-        description: "Action to be performed"
-        type: choice
-        options:
-          - "Create"
-          - "Destroy"
+      app_ami:
+        description: "App AMI"
+        required: true
+      db_ami:
+        description: "DB AMI"
+        required: true
+
 
 permissions:
   id-token: write
@@ -25,11 +26,15 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ccb_env: ${{ steps.parse.outputs.ccb_env }}
+      app_ami: ${{ steps.parse.outputs.app_ami }}
+      db_ami: ${{ steps.parse.outputs.db_ami }}
     steps:
       - name: Parse input values
         id: parse
         run: |
           echo "ccb_env=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          echo "app_ami=${{ github.event.inputs.app_ami }}" >> $GITHUB_OUTPUT
+          echo "db_ami=${{ github.event.inputs.db_ami }}" >> $GITHUB_OUTPUT
 
   create-new-env:
     name: "Create environment structure"
@@ -61,7 +66,7 @@ jobs:
           cd ${{ needs.parse-inputs.outputs.ccb_env }}
           pwd
           ls -latrh
-          jq '.app.app_ami="testing" | .app.db_ami="dbtesting"  | .network.vpc_id="net"' config.json > config_updated.json && mv config_updated.json config.json
+          jq '.app.app_ami=${{ needs.parse-inputs.outputs.app_ami }} | .app.db_ami=${{ needs.parse-inputs.outputs.db_ami }}  | .network.vpc_id="net"' config.json > config_updated.json && mv config_updated.json config.json
           cat config.json
 
       - name: Git commit and push
@@ -71,3 +76,6 @@ jobs:
           whoami
           gh auth status
           git status
+          git add ${{ needs.parse-inputs.outputs.ccb_env }}/
+          git commit -m "Adding the new env: ${{ needs.parse-inputs.outputs.ccb_env }}"
+          git push origin ${{ steps.branch.branch_name }}
