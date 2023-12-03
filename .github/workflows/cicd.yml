@@ -66,7 +66,10 @@ jobs:
           cd ${{ needs.parse-inputs.outputs.ccb_env }}
           pwd
           ls -latrh
-          jq '.app.app_ami=${{ needs.parse-inputs.outputs.app_ami }} | .app.db_ami=${{ needs.parse-inputs.outputs.db_ami }}  | .network.vpc_id="net"' config.json > config_updated.json && mv config_updated.json config.json
+          app_ami=${{ needs.parse-inputs.outputs.app_ami }}
+          db_ami=${{ needs.parse-inputs.outputs.db_ami }}
+
+          jq '.app.app_ami=$app_ami | .app.db_ami=$db_ami  | .network.vpc_id="net"' config.json > config_updated.json && mv config_updated.json config.json
           cat config.json
 
       - name: Git commit and push
