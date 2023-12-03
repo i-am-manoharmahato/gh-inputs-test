@@ -86,7 +86,7 @@ jobs:
 
       - name: Git commit and push
         env:
-          GH_TOKEN: ${{ steps.token.output.app_id }}
+          GH_TOKEN: ${{ steps.token.outputs.token }}
         run: |
           whoami
           gh auth status
