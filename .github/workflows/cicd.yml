@@ -45,6 +45,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: create_token
+        id: token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id:  ${{ secrets.APP_ID }} 
+
       - name: Create new directory sturcture
         id: new_env
         run: |
@@ -80,11 +86,11 @@ jobs:
 
       - name: Git commit and push
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.token.output.app_id }}
         run: |
           whoami
           gh auth status
           git status
-          git add ${{ needs.parse-inputs.outputs.ccb_env }}/
+          git add .
           git commit -m "Adding the new env: ${{ needs.parse-inputs.outputs.ccb_env }}"
           git push origin ${{ steps.branch.branch_name }}
