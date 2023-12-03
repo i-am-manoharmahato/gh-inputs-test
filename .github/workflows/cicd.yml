@@ -46,11 +46,26 @@ jobs:
           pwd
           ls -latrh
 
+      - name: Create a branch
+        id: branch
+        run: |
+          branch_name="${{ github.event.inputs.environment }}-$(date +'%Y%m%d%H%m%S')"
+          echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
+          git checkout -b $branch_name
+
+
       - name: Copy the dir structure
         run: |
+          git branch
           cp -fR envtemplate/ ./${{ needs.parse-inputs.outputs.ccb_env }}/
           cd ${{ needs.parse-inputs.outputs.ccb_env }}
           pwd
           ls -latrh
           jq '.app.app_ami="testing" | .app.db_ami="dbtesting"  | .network.vpc_id="net"' config.json > config_updated.json && mv config_updated.json config.json
           cat config.json
+
+      - name: Git commit and push
+        run: |
+          whoami
+          gh auth status
+          git status
