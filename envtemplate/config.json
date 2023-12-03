@@ -1,0 +1,16 @@
+{
+    "network": {
+        "vpc_id": "vpc-32341414",
+        "subnet_private_a": "subnet-rwer324324",
+        "subnet_restricted_private_a": "subnet-fasf42424"
+    },
+    "app": {
+        "app_ami": "ami-32dsfsfsdfs",
+        "db_ami": "ami-2131sfsfsfsd",
+        "app_instance_type": "t2.micro"
+    },
+    "user-data": {
+        "remote_config_url": "",
+        "proxy_server": "proxy.cloudops.np.tu-aws.com"
+    }
+}

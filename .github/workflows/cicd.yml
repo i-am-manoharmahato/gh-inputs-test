@@ -48,7 +48,9 @@ jobs:
 
       - name: Copy the dir structure
         run: |
-          cp -fR modules/ ./${{ needs.parse-inputs.outputs.ccb_env }}
+          cp -fR envtemplate/ ./${{ needs.parse-inputs.outputs.ccb_env }}/
           cd ${{ needs.parse-inputs.outputs.ccb_env }}
           pwd
           ls -latrh
+          jq '.app.app_ami="testing" | .app.db_ami="dbtesting"  | .network.vpc_id="net"' config.json > config_updated.json && mv config_updated.json config.json
+          cat config.json
