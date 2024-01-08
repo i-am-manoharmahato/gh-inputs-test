@@ -83,14 +83,3 @@ jobs:
              config.json > config_updated.json && mv config_updated.json config.json
           
           cat config.json
-
-      - name: Git commit and push
-        env:
-          GH_TOKEN: ${{ steps.token.outputs.token }}
-        run: |
-          whoami
-          gh auth status
-          git status
-          git add .
-          git commit -m "Adding the new env: ${{ needs.parse-inputs.outputs.ccb_env }}"
-          git push origin ${{ steps.branch.branch_name }}
