@@ -77,8 +77,22 @@ jobs:
              config.json > config_updated.json && mv config_updated.json config.json
           
           cat config.json
-          
+
+      # - name: Cleanup
+      #   uses: ./.github/workflows/cleanup.yml
+      #   with:
+      #     deployment_environment: "testing"
+
+  cleanup:
+    name: Cleanup of the env
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
       - name: Cleanup
         uses: ./.github/workflows/cleanup.yml
         with:
           deployment_environment: "testing"
+
+      
