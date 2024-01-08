@@ -84,7 +84,6 @@ jobs:
       #     deployment_environment: "testing"
 
   cleanup:
-    name: Cleanup of the env
     uses: ./.github/workflows/cleanup.yml
     with:
       deployment_environment: "testing"
