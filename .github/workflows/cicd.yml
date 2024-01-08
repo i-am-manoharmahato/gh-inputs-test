@@ -85,6 +85,7 @@ jobs:
 
   cleanup:
     name: "Cleanup"
+    needs: [ create-new-env ]
     uses: ./.github/workflows/cleanup.yml
     with:
       deployment_environment: "testing"
