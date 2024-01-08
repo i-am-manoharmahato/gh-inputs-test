@@ -77,3 +77,8 @@ jobs:
              config.json > config_updated.json && mv config_updated.json config.json
           
           cat config.json
+          
+      - name: Cleanup
+        uses: ./.github/workflows/cleanup.yml
+        with:
+          deployment_environment: "testing"
