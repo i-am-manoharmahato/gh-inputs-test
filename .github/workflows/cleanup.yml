@@ -1,10 +1,11 @@
 run-name: Plan on `${{ inputs.deployment_environment }}` by @${{ github.actor }}
 on:
   workflow_call:
-    deployment_environment:
-      description: "Deployment Environment"
-      type: string
-      required: true
+    inputs:
+      deployment_environment:
+        description: 'Deployment Environment'
+        type: string
+        required: true
 
 
 jobs:
