@@ -84,8 +84,10 @@ jobs:
       #     deployment_environment: "testing"
 
   cleanup:
+    name: "Cleanup"
     uses: ./.github/workflows/cleanup.yml
     with:
       deployment_environment: "testing"
+    secrets: inherit
 
       
