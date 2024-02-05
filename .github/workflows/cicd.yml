@@ -12,6 +12,12 @@ on:
         description: "DB AMI"
         required: true
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 permissions:
   id-token: write
