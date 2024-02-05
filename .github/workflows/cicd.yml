@@ -75,20 +75,5 @@ jobs:
              --arg vpc_id "$vpc_id" \
              '.app.app_ami=$app_ami | .app.db_ami=$db_ami  | .network.vpc_id=$vpc_id' \
              config.json > config_updated.json && mv config_updated.json config.json
-          
-          cat config.json
-
-      # - name: Cleanup
-      #   uses: ./.github/workflows/cleanup.yml
-      #   with:
-      #     deployment_environment: "testing"
-
-  cleanup:
-    name: "Cleanup"
-    needs: [ create-new-env ]
-    uses: ./.github/workflows/cleanup.yml
-    with:
-      deployment_environment: "testing"
-    secrets: inherit
 
       
