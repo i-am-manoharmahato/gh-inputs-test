@@ -57,23 +57,8 @@ jobs:
           branch_name="${{ github.event.inputs.environment }}-$(date +'%Y%m%d%H%m%S')"
           echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
           git checkout -b $branch_name
-
-
-      - name: Copy the dir structure
-        run: |
-          git branch
-          cp -fR envtemplate/ ./${{ needs.parse-inputs.outputs.ccb_env }}/
-          cd ${{ needs.parse-inputs.outputs.ccb_env }}
-          pwd
-          ls -latrh
-          app_ami=${{ needs.parse-inputs.outputs.app_ami }}
-          db_ami=${{ needs.parse-inputs.outputs.db_ami }}
-          vpc_id="net"
-
-          jq --arg app_ami "$app_ami" \
-             --arg db_ami "$db_ami" \
-             --arg vpc_id "$vpc_id" \
-             '.app.app_ami=$app_ami | .app.db_ami=$db_ami  | .network.vpc_id=$vpc_id' \
-             config.json > config_updated.json && mv config_updated.json config.json
-
       
+      - name: Create a PR
+        id: create-pr
+        run: |
+          gh pr create --base "${{ github.ref }}" --head ${{ steps.branch.outputs.branch_name }} --title "Dummy PR: ${{ needs.parse-inputs.outputs.ccb_env }}" --body "Dummy PR: ${{ needs.parse-inputs.outputs.ccb_env }}"
