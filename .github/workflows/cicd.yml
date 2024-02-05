@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
 permissions:
   id-token: write
@@ -65,6 +65,8 @@ jobs:
           git checkout -b $branch_name
       
       - name: Create a PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
         id: create-pr
         run: |
           gh pr create --base "${{ github.ref }}" --head ${{ steps.branch.outputs.branch_name }} --title "Dummy PR: ${{ needs.parse-inputs.outputs.ccb_env }}" --body "Dummy PR: ${{ needs.parse-inputs.outputs.ccb_env }}"
