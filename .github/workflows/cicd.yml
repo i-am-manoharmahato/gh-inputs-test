@@ -8,6 +8,8 @@ on:
         required: true
       flag:
         description: 'Enter a boolean value (true/false)'
+        type: boolean
+        default: true
         required: true
 
 jobs:
