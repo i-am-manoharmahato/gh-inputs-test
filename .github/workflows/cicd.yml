@@ -1,72 +1,28 @@
-name: CI/CD
+name: Input Workflow
+
 on:
   workflow_dispatch:
     inputs:
-      environment:
-        description: "Name of the env"
+      name:
+        description: 'Enter a string value'
         required: true
-      app_ami:
-        description: "App AMI"
+      flag:
+        description: 'Enter a boolean value (true/false)'
         required: true
-      db_ami:
-        description: "DB AMI"
-        required: true
-
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
-
-env:
-  GITHUB_TOKEN: ${{ secrets.TOKEN }}
-
-permissions:
-  id-token: write
-  contents: write
-  pull-requests: write
-  actions: write
 
 jobs:
-
-  parse-inputs:
-    name: "Parse user inputs"
+  process_input:
     runs-on: ubuntu-latest
-    outputs:
-      ccb_env: ${{ steps.parse.outputs.ccb_env }}
-      app_ami: ${{ steps.parse.outputs.app_ami }}
-      db_ami: ${{ steps.parse.outputs.db_ami }}
     steps:
-      - name: Parse input values
-        id: parse
-        run: |
-          echo "ccb_env=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-          echo "app_ami=${{ github.event.inputs.app_ami }}" >> $GITHUB_OUTPUT
-          echo "db_ami=${{ github.event.inputs.db_ami }}" >> $GITHUB_OUTPUT
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-  create-new-env:
-    name: "Create environment structure"
-    runs-on: ubuntu-latest
-    needs: [ parse-inputs ]
-    steps:
-
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Create new directory sturcture
-        id: new_env
+      - name: Set up environment variables
         run: |
-          pwd
-          ls -latrh
+          echo "INPUT_NAME=${{ github.event.inputs.name }}" >> $GITHUB_ENV
+          echo "INPUT_FLAG=${{ github.event.inputs.flag }}" >> $GITHUB_ENV
 
-      - name: Create a branch
-        id: branch
+      - name: Display inputs
         run: |
-          branch_name="${{ github.event.inputs.environment }}-$(date +'%Y%m%d%H%m%S')"
-          echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
-          git checkout -b $branch_name
-      
-      - name: Create a PR
-        env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
-        id: create-pr
-        run: |
-          gh pr create --base "${{ github.ref }}" --head ${{ steps.branch.outputs.branch_name }} --title "Dummy PR: ${{ needs.parse-inputs.outputs.ccb_env }}" --body "Dummy PR: ${{ needs.parse-inputs.outputs.ccb_env }}"
+          echo "String: $INPUT_NAME"
+          echo "Boolean: $INPUT_FLAG"
